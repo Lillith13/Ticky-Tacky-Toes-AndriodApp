@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Ticky Tacky Toes</string>
+
+    <!-- strings for MainActivity.xml -->
+    <string name="onePlayerButtonString"> One Player </string>
+    <string name="twoPlayerButtonString"> Two Players </string>
+    <string name="enterNameString_PlayerOne"> Player 1: </string>
+    <string name="enterNameString_PlayerTwo"> Player 2: </string>
+
+    <!-- string for PlayerSetup.xml -->
+    <string name="startGameButton"> Start Game </string>
+    <string name="p1nInputPlaceholder"> enter Player 1 name </string>
+    <string name="p2nInputPlaceholder"> enter Player 2 name </string>
+    <string name="custMarkButton"> Color Picker </string>
+    <string name="turnDisplayDefault">Player # Turn</string>
+
+    <!-- strings for GameBoard.xml -->
+    <string name="homeButton"> Home </string>
+    <string name="playAgainButton"> Play Again </string>
+
+</resources>
