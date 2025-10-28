@@ -1,9 +1,5 @@
 package com.example.tickytackytoes;
 
-// import helper functions for tracking turn, tracking score, and for determining win conditions
-
-// if condition for CPU Logic import -> so the game doesn't bother even looking at the CPULogic file during two player mode
-
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -11,7 +7,7 @@ import android.widget.TextView;
 public class GameLogic {
     private static int[][] gameboard;
 
-    //first el == row, second el == col, third el == line type
+    //winType Array => {row, col, winLine type}
     private int[] winType = {-1, -1, -1};
 
     private Button playAgainBTN;
@@ -21,9 +17,6 @@ public class GameLogic {
 
     private boolean inputEnabled = true;
 
-
-
-    // decide first if one player or two player
 
     GameLogic() {
         //setup empty gameboard

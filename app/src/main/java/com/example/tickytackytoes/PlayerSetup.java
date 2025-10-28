@@ -20,6 +20,14 @@ public class PlayerSetup extends AppCompatActivity {
     public int selectedXColor;
     public int selectedOColor;
 
+    public int difficulty = 0; // default 0 == easy
+    public void setDifficulty(int difficulty) {
+        this.difficulty = difficulty;
+    }
+    public int getDifficulty() {
+        return difficulty;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -45,10 +53,10 @@ public class PlayerSetup extends AppCompatActivity {
 
         } else {
             playerNames[1] = "Player 2";
+
+            /// make difficulty selector button invisible if not single player game
+
         }
-
-        ///! name inputs need to be saved on every character update to preserve name when navigating between "CustomerMarkerSelect" and PlayerSetup
-
     }
 
 
@@ -71,6 +79,13 @@ public class PlayerSetup extends AppCompatActivity {
             });
             dialog.show(getSupportFragmentManager(), "OColorPicker");
         }
+    }
+
+    /// if single player => choose difficulty (default == easy)
+    // onClick listener for difficulty selection
+    public void difficultySelect(View view) {
+        /// this function will work the same way that the colorPicker function does, opening a fragment/model for selection
+        // setDifficulty(buttonID);
     }
 
     // define GameBoard Intent function

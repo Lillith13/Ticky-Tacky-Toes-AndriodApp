@@ -161,9 +161,10 @@ public class TicTacToeBoard extends View {
                     }
                 }
             }
+
+            // below IF should be false unless CPU turn && gamemode == Single Player
             if (!winningLine && game.getPlayer() % 2 == 0 && MainActivity.playerCount == 1) {
-                game.setInputEnabled(!(game.getPlayer() % 2 == 0)); // should be false when player == 2 (CPU)
-                //cpu = new CPULogic();
+                game.setInputEnabled(!(game.getPlayer() % 2 == 0));
 
                 // wait a few seconds for CPU to make it's move
                 new Handler(Looper.getMainLooper()).postDelayed(() -> {
@@ -172,18 +173,17 @@ public class TicTacToeBoard extends View {
                     float cpuY = (cpuChosenMove[0] - 0.5f) * cellSize;
                     simulateTouch(cpuX, cpuY);
 
-                    if (cpuChosenMove[2] == 1) {
-                        winningLine = true;
-                        invalidate(); // <-- redraw AFTER we know there’s a win
-                    } else {
-                        invalidate(); // just redraw normally
-                    }
+                    // triggers onDraw for winningLine for CPU win
+                    if (cpuChosenMove[2] == 1)  winningLine = true;
+
+                    invalidate();
                 }, 1000);
 
                 invalidate();
             }
 
-            invalidate(); //refreshes gameboard
+            //refreshes gameboard
+            invalidate();
             return true;
         }
         return false;

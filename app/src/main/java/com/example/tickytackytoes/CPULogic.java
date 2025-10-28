@@ -27,6 +27,8 @@ public class CPULogic {
         int row = 4;
         int col = 4;
         boolean validMove = false;
+
+        // cpuWin == false
         int cpuWin = 0;
 
         if(!winningLine) {
@@ -39,6 +41,7 @@ public class CPULogic {
                     winningLine = game.winnerCheck();
 
                     if(winningLine) {
+                        // sets cpuWin to 1 to indicate TRUE
                         cpuWin = 1;
                     }
                 }
@@ -50,8 +53,8 @@ public class CPULogic {
                     game.setPlayer(game.getPlayer()+1);
                 }
         }
-        //
-        int[] temp = new int[]{row, col, cpuWin};
-        return temp;
+
+        // pass back to touchEvent in TicTacToeBoard where the touch is happening [row, col] and whether or not it triggers a win condition (0/false or 1/true)
+        return new int[]{row, col, cpuWin};
     }
 }
