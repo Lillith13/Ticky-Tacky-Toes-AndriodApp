@@ -13,6 +13,7 @@
     <string name="p2nInputPlaceholder"> enter Player 2 name </string>
     <string name="custMarkButton"> Color Picker </string>
     <string name="turnDisplayDefault">Player # Turn</string>
+    <string name="difficultyButtText">Choose Difficulty</string>
 
     <!-- strings for GameBoard.xml -->
     <string name="homeButton"> Home </string>

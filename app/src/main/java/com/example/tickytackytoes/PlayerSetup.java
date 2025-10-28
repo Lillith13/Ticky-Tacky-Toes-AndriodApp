@@ -3,6 +3,7 @@ package com.example.tickytackytoes;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -20,11 +21,33 @@ public class PlayerSetup extends AppCompatActivity {
     public int selectedXColor;
     public int selectedOColor;
 
-    public int difficulty = 0; // default 0 == easy
-    public void setDifficulty(int difficulty) {
-        this.difficulty = difficulty;
+    private static int difficulty = 0; // default 0 == easy
+    public void setDifficulty(int diff) {
+        // Update your logic class
+        this.difficulty = diff;
+
+        // Update your button text instantly
+        Button difficultyButton = findViewById(R.id.chooseDifficulty);
+
+        String label;
+        switch (diff) {
+            case 0:
+                label = "Easy";
+                break;
+            case 1:
+                label = "Medium";
+                break;
+            case 2:
+                label = "Hard";
+                break;
+            default:
+                label = "Easy";
+        }
+
+        difficultyButton.setText("CPU: " + label);
     }
-    public int getDifficulty() {
+
+    public static int getDifficulty() {
         return difficulty;
     }
 
@@ -53,9 +76,9 @@ public class PlayerSetup extends AppCompatActivity {
 
         } else {
             playerNames[1] = "Player 2";
-
-            /// make difficulty selector button invisible if not single player game
-
+            // make difficulty selector button invisible if not single player game
+            Button diffSelButt = findViewById(R.id.chooseDifficulty);
+            diffSelButt.setVisibility(View.GONE);
         }
     }
 
@@ -84,8 +107,9 @@ public class PlayerSetup extends AppCompatActivity {
     /// if single player => choose difficulty (default == easy)
     // onClick listener for difficulty selection
     public void difficultySelect(View view) {
-        /// this function will work the same way that the colorPicker function does, opening a fragment/model for selection
-        // setDifficulty(buttonID);
+        DifficultySelectorFragment dialog = new DifficultySelectorFragment();
+        dialog.setDifficultySelectorListener(this::setDifficulty);
+        dialog.show(getSupportFragmentManager(), "Choose Difficulty - Default = Easy");
     }
 
     // define GameBoard Intent function

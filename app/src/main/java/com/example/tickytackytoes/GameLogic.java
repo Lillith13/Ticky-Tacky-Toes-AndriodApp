@@ -5,7 +5,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class GameLogic {
-    private static int[][] gameboard;
+    protected static int[][] gameboard;
 
     //winType Array => {row, col, winLine type}
     private int[] winType = {-1, -1, -1};
