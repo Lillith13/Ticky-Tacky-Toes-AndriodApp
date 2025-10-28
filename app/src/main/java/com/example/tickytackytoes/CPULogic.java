@@ -24,21 +24,25 @@ public class CPULogic {
     };
 
     public static int[] cpuMove(GameLogic game, boolean winningLine) {
-        int row = 0;
-        int col = 0;
+        int row = 4;
+        int col = 4;
         boolean validMove = false;
-
-        while(!validMove) {
-            row = pickRow();
-            col = pickCol();
-            validMove = game.updateGameBoard(row, col);
-        }
+        int cpuWin = 0;
 
         if(!winningLine) {
+                winningLine = game.winnerCheck();
 
-                if (game.winnerCheck()) {
-                    winningLine = true;
+                while(!validMove) {
+                    row = pickRow();
+                    col = pickCol();
+                    validMove = game.updateGameBoard(row, col);
+                    winningLine = game.winnerCheck();
+
+                    if(winningLine) {
+                        cpuWin = 1;
+                    }
                 }
+
                 // alternate between players
                 if (game.getPlayer() % 2 == 0) {
                     game.setPlayer(game.getPlayer()-1);
@@ -47,7 +51,7 @@ public class CPULogic {
                 }
         }
         //
-        int[] temp = new int[]{row, col};
+        int[] temp = new int[]{row, col, cpuWin};
         return temp;
     }
 }

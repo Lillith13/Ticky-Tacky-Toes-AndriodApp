@@ -92,7 +92,7 @@ public class TicTacToeBoard extends View {
     public void simulateTouch(float x, float y) {
         long downTime = SystemClock.uptimeMillis();
 
-        MotionEvent event = MotionEvent.obtain(
+        MotionEvent downEvent = MotionEvent.obtain(
                 downTime,
                 downTime,
                 MotionEvent.ACTION_DOWN,
@@ -101,8 +101,22 @@ public class TicTacToeBoard extends View {
                 0
         );
 
-        this.dispatchTouchEvent(event);
-        event.recycle();
+        this.dispatchTouchEvent(downEvent);
+        downEvent.recycle();
+
+        // small delay before ACTION_UP — keeps behavior consistent with real taps
+        long upTime = SystemClock.uptimeMillis();
+        MotionEvent upEvent = MotionEvent.obtain(
+                downTime,
+                upTime,
+                MotionEvent.ACTION_UP,
+                x,
+                y,
+                0
+        );
+
+        this.dispatchTouchEvent(upEvent);
+        upEvent.recycle();
     }
 
     public boolean isEnabled = true;
@@ -149,13 +163,22 @@ public class TicTacToeBoard extends View {
             }
             if (!winningLine && game.getPlayer() % 2 == 0 && MainActivity.playerCount == 1) {
                 game.setInputEnabled(!(game.getPlayer() % 2 == 0)); // should be false when player == 2 (CPU)
-                cpu = new CPULogic();
+                //cpu = new CPULogic();
 
                 // wait a few seconds for CPU to make it's move
                 new Handler(Looper.getMainLooper()).postDelayed(() -> {
                     int[] cpuChosenMove = CPULogic.cpuMove(game, winningLine);
-                    simulateTouch(cpuChosenMove[0], cpuChosenMove[1]);
-                }, 2000);
+                    float cpuX = (cpuChosenMove[1] - 0.5f) * cellSize;
+                    float cpuY = (cpuChosenMove[0] - 0.5f) * cellSize;
+                    simulateTouch(cpuX, cpuY);
+
+                    if (cpuChosenMove[2] == 1) {
+                        winningLine = true;
+                        invalidate(); // <-- redraw AFTER we know there’s a win
+                    } else {
+                        invalidate(); // just redraw normally
+                    }
+                }, 1000);
 
                 invalidate();
             }
