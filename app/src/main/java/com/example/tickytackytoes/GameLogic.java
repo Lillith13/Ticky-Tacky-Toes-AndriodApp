@@ -13,7 +13,7 @@ public class GameLogic {
     private Button playAgainBTN;
     private Button homeBTN;
     private TextView playerTurn;
-    private int player = 1; // player turn
+    private static int player = 1; // player turn
 
     private boolean inputEnabled = true;
 
@@ -131,13 +131,13 @@ public class GameLogic {
     }
 
 
-    public int[][] getGameboard() {
+    public static int[][] getGameboard() {
         return gameboard;
     }
     public void setPlayer(int player) {
-        this.player = player;
+        GameLogic.player = player;
     }
-    public int getPlayer() {
+    public static int getPlayer() {
         return player;
     }
 

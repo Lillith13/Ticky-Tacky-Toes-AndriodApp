@@ -29,14 +29,14 @@ public class TicTacToeBoard extends View {
     private int cellSize = getWidth()/3;
 
     GameLogic game;
-    CPULogic cpu = new CPULogic();
+    CPULogic cpu;
 
 
     public TicTacToeBoard(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
 
         game = new GameLogic();
-        if(MainActivity.playerCount == 2) cpu = null;
+        if(MainActivity.playerCount == 1) cpu = new CPULogic();
 
         TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.TicTacToeBoard, 0,0);
 
