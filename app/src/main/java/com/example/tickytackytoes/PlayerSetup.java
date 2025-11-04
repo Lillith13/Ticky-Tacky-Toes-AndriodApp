@@ -12,6 +12,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 
 
 public class PlayerSetup extends AppCompatActivity {
@@ -21,7 +23,7 @@ public class PlayerSetup extends AppCompatActivity {
     public int selectedXColor;
     public int selectedOColor;
 
-    private static int difficulty = 0; // default 0 == easy
+    private static int difficulty = 3; // default 0 == easy
     public void setDifficulty(int diff) {
         // Update your logic class
         this.difficulty = diff;
@@ -40,11 +42,11 @@ public class PlayerSetup extends AppCompatActivity {
             case 2:
                 label = "Hard";
                 break;
-            default:
-                label = "Easy";
+            default: // 3
+                label = "Choose Difficulty";
         }
 
-        difficultyButton.setText("CPU: " + label);
+        difficultyButton.setText(String.format("CPU: %s", label));
     }
 
     public static int getDifficulty() {
@@ -73,6 +75,9 @@ public class PlayerSetup extends AppCompatActivity {
 
             p2nInputContainer.setHint(playerNames[1]);
             p2nInput.setText(playerNames[1]);
+
+            setDifficulty(3); // default difficulty set to easy
+            System.out.println(getDifficulty());
 
         } else {
             playerNames[1] = "Player 2";

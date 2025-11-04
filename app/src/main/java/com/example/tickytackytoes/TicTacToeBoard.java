@@ -128,7 +128,7 @@ public class TicTacToeBoard extends View {
 
         // inputEnabled only changes if playerCount == 1
         if(MainActivity.playerCount == 1) {
-            game.setInputEnabled(game.getPlayer() == 1);
+            game.setInputEnabled(GameLogic.getPlayer() == 1);
         }
 
         if (!isEnabled) {
@@ -154,17 +154,18 @@ public class TicTacToeBoard extends View {
                         invalidate();
                     }
                     // alternate between players
-                    if (game.getPlayer() % 2 == 0) {
-                        game.setPlayer(game.getPlayer()-1);
+                    if (GameLogic.getPlayer() % 2 == 0) {
+                        game.setInputEnabled(true);
+                        GameLogic.setPlayer(GameLogic.getPlayer()-1);
                     } else {
-                        game.setPlayer(game.getPlayer()+1);
+                        if (MainActivity.getPlayerCount() == 1) game.setInputEnabled(false);
+                        GameLogic.setPlayer(GameLogic.getPlayer()+1);
                     }
                 }
             }
 
             // below IF should be false unless CPU turn && gamemode == Single Player
-            if (!winningLine && game.getPlayer() % 2 == 0 && MainActivity.playerCount == 1) {
-                game.setInputEnabled(!(game.getPlayer() % 2 == 0));
+            if (!winningLine && GameLogic.getPlayer() % 2 == 0 && MainActivity.playerCount == 1) {
 
                 // wait a few seconds for CPU to make it's move
                 new Handler(Looper.getMainLooper()).postDelayed(() -> {
@@ -207,8 +208,8 @@ public class TicTacToeBoard extends View {
         //decides which marker to put on the board
         for (int r=0; r<3; r++) {
             for (int c=0; c<3; c++) {
-                if (game.getGameboard()[r][c] != 0) {
-                    if (game.getGameboard()[r][c] == 1) {
+                if (GameLogic.getGameboard()[r][c] != 0) {
+                    if (GameLogic.getGameboard()[r][c] == 1) {
                         drawX(canvas, r, c);
                     } else {
                         drawO(canvas, r, c);
@@ -285,7 +286,7 @@ public class TicTacToeBoard extends View {
             case 4:
                 drawDiagonalLineNeg(canvas);
                 break;
-            case 5:
+            default:
                 break;
         }
         invalidate();
@@ -300,7 +301,7 @@ public class TicTacToeBoard extends View {
     public void resetGame() {
         game.resetGame();
         if (MainActivity.playerCount == 1) {
-           game.setPlayer(1);
+           GameLogic.setPlayer(1);
         }
         winningLine = false;
     }

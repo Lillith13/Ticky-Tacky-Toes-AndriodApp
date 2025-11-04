@@ -11,6 +11,8 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.ArrayList;
+
 public class GameBoard extends AppCompatActivity {
 
 
@@ -38,25 +40,24 @@ public class GameBoard extends AppCompatActivity {
         tictactoeboard = findViewById(R.id.ticTacToeBoard);
 
         int xColor = getIntent().getIntExtra("XColor", Color.GRAY);
-        int oColor= getIntent().getIntExtra("OColor", Color.DKGRAY);
+        int oColor = getIntent().getIntExtra("OColor", Color.DKGRAY);
 
         if(xColor != 0) {
             tictactoeboard.setXColor(getColor(xColor));
         } else {
-            tictactoeboard.setXColor(Color.GRAY);
+            tictactoeboard.setXColor(Color.GRAY); // default marker color
         }
         if(oColor != 0) {
             tictactoeboard.setOColor(getColor(oColor));
         } else {
-            tictactoeboard.setOColor(Color.GRAY);
+            tictactoeboard.setOColor(Color.GRAY); // default marker color
         }
 
+        // makes color changes based on dark/light modes on device
         tictactoeboard.setBoardColor((getResources().getConfiguration().uiMode &
                 Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES ? Color.LTGRAY : Color.DKGRAY);
 
-
         tictactoeboard.setUpGame(playAgainBTN, homeBTN, playerTurn);
-
 
     }
 
@@ -67,6 +68,8 @@ public class GameBoard extends AppCompatActivity {
 
     public void homeButtonClick(View view) {
         Intent intent = new Intent(this, MainActivity.class);
+        CPULogic.cpuPastMoves = new ArrayList<>();
+        GameLogic.setPlayer(1);
         startActivity(intent);
     };
 }

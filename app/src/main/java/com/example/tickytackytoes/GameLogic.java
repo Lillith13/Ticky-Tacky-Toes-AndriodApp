@@ -1,8 +1,11 @@
 package com.example.tickytackytoes;
 
+import android.annotation.SuppressLint;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class GameLogic {
     protected static int[][] gameboard;
@@ -46,6 +49,7 @@ public class GameLogic {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     public boolean winnerCheck() {
         boolean isWinner = false;
 
@@ -109,6 +113,7 @@ public class GameLogic {
 
         //only reset if OnePlayer mode
         if(MainActivity.getPlayerCount() == 1) {
+            CPULogic.cpuPastMoves = new ArrayList<>(); // should empty arrayList from last game
             setPlayer(1);
         }
 
@@ -134,7 +139,7 @@ public class GameLogic {
     public static int[][] getGameboard() {
         return gameboard;
     }
-    public void setPlayer(int player) {
+    public static void setPlayer(int player) {
         GameLogic.player = player;
     }
     public static int getPlayer() {
