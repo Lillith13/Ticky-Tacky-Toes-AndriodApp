@@ -2,7 +2,10 @@ package com.example.tickytackytoes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class CPULogic {
 
@@ -11,6 +14,7 @@ public class CPULogic {
 
     static int[][] gameBoardDeepCopy;
     static List<int[]> cpuPastMoves;
+    static Set<int[]> playerPastMoves;
 
     static int[] cpuLastMove;
 
@@ -26,6 +30,7 @@ public class CPULogic {
             // deep copy of board on initialize CPULogic
             gameBoardDeepCopy = deepCopyBoard(GameLogic.getGameboard());
         }
+        if (gameDifficulty == 2) playerPastMoves = new HashSet<>();
     }
 
 /// HELPERS
@@ -53,29 +58,148 @@ public class CPULogic {
         return copy;
     }
 
-    private static boolean wouldWin(int row, int col) {
+    private static boolean wouldWin(int row, int col, int player) {
         // check move against deepCopy of board (updated every turn) using stripped down GameLogic.winnerCheck() logic
         int[][] boardCopyTemp = deepCopyBoard(gameBoardDeepCopy);
 
-        if (boardCopyTemp[row - 1][col - 1] == 0) boardCopyTemp[row - 1][col - 1] = GameLogic.getPlayer();
-        else return false;
+        if (boardCopyTemp[row - 1][col - 1] != 0)  return false;
+        int temp = ((row * 100) + col);
 
-
-        //horizontal check
-        for (int r=row; r<3; r++) {
-            if (boardCopyTemp[r][0] == boardCopyTemp[r][1] && boardCopyTemp[r][0] == boardCopyTemp[r][2] && boardCopyTemp[r][0] != 0) return true;
+        switch (temp) {
+            case 101: // == {1, 1} = [0][0]
+                // ROW Check
+                if (boardCopyTemp[0][1] == player && boardCopyTemp[0][2] == player) return true;
+                // NEG Slope Check
+                if (boardCopyTemp[1][1] == player && boardCopyTemp[2][2] == player) return true;
+                // COL Check
+                if (boardCopyTemp[1][0] == player && boardCopyTemp[2][0] == player) return true;
+                break;
+            case 102: // == {1, 2} = [0][1]
+                // ROW Check
+                if (boardCopyTemp[0][0] == player && boardCopyTemp[0][2] == player) return true;
+                // COL Check
+                if (boardCopyTemp[1][1] == player && boardCopyTemp[2][1] == player) return true;
+                break;
+            case 103: // == {1, 3} = [0][2]
+                // ROW Check
+                if (boardCopyTemp[0][0] == player && boardCopyTemp[0][1] == player) return true;
+                // POS Slope Check
+                if (boardCopyTemp[2][0] == player && boardCopyTemp[1][1] == player) return true;
+                // COL Check
+                if (boardCopyTemp[1][2] == player && boardCopyTemp[2][2] == player) return true;
+                break;
+            case 201:  // == {2, 1} = [1][0]
+                // ROW Check
+                if (boardCopyTemp[1][1] == player && boardCopyTemp[1][2] == player) return true;
+                // COL Check
+                if (boardCopyTemp[0][0] == player && boardCopyTemp[2][0] == player) return true;
+                break;
+            case 202: // == {2, 2} == canter square = [1][1]
+                // ROW Check
+                if (boardCopyTemp[1][0] == player && boardCopyTemp[1][2] == player) return true;
+                //POS Slope Check
+                if (boardCopyTemp[2][0] == player && boardCopyTemp[0][2] == player) return true;
+                // NEG Slope Check
+                if (boardCopyTemp[0][0] == player && boardCopyTemp[2][2] == player) return true;
+                // COL Check
+                if (boardCopyTemp[0][1] == player && boardCopyTemp[2][1] == player) return true;
+                break;
+            case 203:  // == {2, 3} = [1][2]
+                // ROW Check
+                if (boardCopyTemp[1][0] == player && boardCopyTemp[1][1] == player) return true;
+                // COL Check
+                if (boardCopyTemp[0][2] == player && boardCopyTemp[2][2] == player) return true;
+                break;
+            case 301: // == {3, 1} = [2][0]
+                // ROW Check
+                if (boardCopyTemp[2][1] == player && boardCopyTemp[2][2] == player) return true;
+                // POS Slope Check
+                if (boardCopyTemp[1][1] == player && boardCopyTemp[0][2] == player) return true;
+                // COL Check
+                if (boardCopyTemp[0][0] == player && boardCopyTemp[1][0] == player) return true;
+                break;
+            case 302:  // == {3, 2} = [2][1]
+                // ROW Check
+                if (boardCopyTemp[2][0] == player && boardCopyTemp[2][2] == player) return true;
+                // COL Check
+                if (boardCopyTemp[0][1] == player && boardCopyTemp[1][1] == player) return true;
+                break;
+            case 303: // == {3, 3} = [2][2]
+                // ROW Check
+                if (boardCopyTemp[2][0] == player && boardCopyTemp[2][1] == player) return true;
+                // NEG Slope Check
+                if (boardCopyTemp[0][0] == player && boardCopyTemp[1][1] == player) return true;
+                // COL Check
+                if (boardCopyTemp[0][2] == player && boardCopyTemp[1][2] == player) return true;
+                break;
         }
 
-        //vertical check
-        for (int c=col; c<3; c++) {
-            if (boardCopyTemp[0][c] == boardCopyTemp[1][c] && boardCopyTemp[0][c] == boardCopyTemp[2][c] && boardCopyTemp[0][c] != 0) return true;
+        return false;
+    }
+
+    private static int[] findPotWin(List<int[]> pastMoves, int player) {
+        /*
+            This function will iterate through either the cpuPastMoves List or the playerPastMoves List to find a potential win.
+            If a potential win is found it will be return, else null will be returned.
+            If called with playerPastMoves as it's arg the move chosen (if one found) will be the cpu's Blocking Move
+        */
+
+        int tempR;
+        int tempC;
+        int[] focusMove;
+
+        // iterates in reverse (last in list -> first)
+        for (int x = pastMoves.size() - 1; x >= 0; x--) {
+            // grab relevant values
+            focusMove = pastMoves.get(x);
+
+            if (focusMove[0] > 1) tempR = focusMove[0] - 1;
+            else tempR = focusMove[0];
+            if (focusMove[1] > 1) tempC = focusMove[1] - 1;
+            else tempC = focusMove[1];
+
+            // iterate to find potential wins
+            for (int r = tempR; r < 4 && r < focusMove[0] + 2; r++) {
+                for (int c = tempC; c < 4 && c < focusMove[1] + 2; c++) {
+                    // if win condition found return move selection
+                    if (GameLogic.getGameboard()[r - 1][c - 1] == 0) {
+                        if(wouldWin(r, c, player)) return new int[] {r,c};
+                    }
+                }
+            }
+        }
+        // no potential win or blocking move found will return null;
+        return null;
+    }
+
+    private static int[] findOpenNeighbor() {
+        int tempR;
+        int tempC;
+        int[] focusMove;
+
+        // iterate through deep copy checking all lastMoves for openNeighbors
+        // first open space found is selected --- starting with most recently added move -> first added
+        for (int pm = cpuPastMoves.size() - 1; pm >= 0; pm--) {
+            // grab relevant values
+            focusMove = cpuPastMoves.get(pm);
+
+            if (focusMove[0] > 1) tempR = focusMove[0] - 1;
+            else tempR = focusMove[0];
+            if (focusMove[1] > 1) tempC = focusMove[1] - 1;
+            else tempC = focusMove[1];
+
+            // iterate to find openNeighbor
+            for (int r = tempR; r < 4 && r < focusMove[0] + 2; r++) {
+                for (int c = tempC; c < 4 && c < focusMove[1] + 2; c++) {
+                    int[] tmp = new int[] {r,c};
+                    // if open space found return valid neighbor move
+                    if (GameLogic.getGameboard()[r - 1][c - 1] == 0 && !Arrays.equals(focusMove, tmp)) return new int[] {r,c};
+                    // else continue iterating
+                }
+            }
         }
 
-        //pos slope check
-        if (boardCopyTemp[2][0] == boardCopyTemp[1][1] && boardCopyTemp[2][0] == boardCopyTemp[0][2] && boardCopyTemp[2][0] != 0) return true;
-
-        //neg slope check - if this does not resolve to true false is returned
-        return boardCopyTemp[0][0] == boardCopyTemp[1][1] && boardCopyTemp[0][0] == boardCopyTemp[2][2] && boardCopyTemp[0][0] != 0;
+        return null;
     }
 
 /// DIFFICULTY LOGIC FUNCTIONS
@@ -85,84 +209,44 @@ public class CPULogic {
     private static int[] mediumMove() {
         // if pastMoves.length != 0
         if (!cpuPastMoves.isEmpty()) {
-            // check around own moves for potential win - defaulted to [0, 0]
-            int tempR;
-            int tempC;
-            int[] focusMove;
-
-            // iterate through deep copy checking for win scenario around all lastMoves
             if (cpuPastMoves.size() > 1) {
-                // --- starting with most recently added move -> first added
-                for (int pm = cpuPastMoves.size() - 1; pm >= 0; pm--) {
-                    // grab relevant values
-                    focusMove = cpuPastMoves.get(pm);
-
-                    if (focusMove[0] > 1) tempR = focusMove[0] - 1;
-                    else tempR = focusMove[0];
-                    if (focusMove[1] > 1) tempC = focusMove[1] - 1;
-                    else tempC = focusMove[1];
-
-                    // iterate to find potential wins
-                    for (int r = tempR; r < 4 && r < focusMove[0] + 2; r++) {
-                        for (int c = tempC; c < 4 && c < focusMove[1] + 2; c++) {
-                            // if win condition found return winning move
-                            if (GameLogic.getGameboard()[r - 1][c - 1] == 0) {
-                                if(wouldWin(r,c)) return new int[] {r,c};
-                            }
-                            // else continue iterating
-                        }
-                    }
-                }
+                int[] cpuWin = findPotWin(cpuPastMoves, 2);
+                if (cpuWin != null) return cpuWin;
             }
-
-            // iterate through deep copy checking all lastMoves for openNeighbors
-            // first open space found is selected --- starting with most recently added move -> first added
-            for (int pm = cpuPastMoves.size() - 1; pm >= 0; pm--) {
-                // grab relevant values
-                focusMove = cpuPastMoves.get(pm);
-
-                if (focusMove[0] > 1) tempR = focusMove[0] - 1;
-                else tempR = focusMove[0];
-                if (focusMove[1] > 1) tempC = focusMove[1] - 1;
-                else tempC = focusMove[1];
-
-                // iterate to find openNeighbor
-                for (int r = tempR; r < 4 && r < focusMove[0] + 2; r++) {
-                    for (int c = tempC; c < 4 && c < focusMove[1] + 2; c++) {
-                        int[] tmp = new int[] {r,c};
-                        // if open space found return valid neighbor move
-                        if (GameLogic.getGameboard()[r - 1][c - 1] == 0 && !Arrays.equals(focusMove, tmp)) return new int[] {r,c};
-                        // else continue iterating
-                    }
-                }
-            }
+            // if no open neighbor was found null will be returned
+            return findOpenNeighbor();
         }
-
         // if all above fails to find valid move, null returned
         return null;
     }
 
     private static int[] hardMove () {
-        //int[] move = new int[2];
+        // update playerPastMoves List
+        List<int[]> playerMovesList = Collections.emptyList();
+        if(playerPastMoves != null) {
+            playerMovesList = playerPastMoves.stream().toList();
+        }
 
-        // if pastMoves().length != 0
+        if(!cpuPastMoves.isEmpty()) {
+            
+            if (playerMovesList.size() > 1) {
+                // block potential player win
+                int[] blockMove = findPotWin(playerMovesList, 1);
+                if(blockMove != null) return blockMove;
+            }
 
-            // if board has taken squares
-                // find player markers && block potential playerWin
+            if (cpuPastMoves.size() > 1) {
+                // find a move for CPU win
+                int[] cpuWin = findPotWin(cpuPastMoves, 2);
+                if (cpuWin != null) return cpuWin;
 
-            // else if .length >= 2
-                // check around own moves for potential win
+            }
 
-            // else
-                // place marker near last move
+            // all else failed => find open neighbor
+            return findOpenNeighbor();
+        }
 
-        // else == cpu first move
-
-            // check board for any moves played
-                // place marker near player last move
-
-            // else => call easyMove() for random placement
-
+        // all other conditions failed == return null == will call easyMove() func for random move
         return null;
     }
 
@@ -189,7 +273,6 @@ public class CPULogic {
                     case 2:
                         //hard
                         moveChosen = hardMove();
-                        if(moveChosen == null) moveChosen = mediumMove();
                         if(moveChosen == null) moveChosen = easyMove();
                         break;
                     case 0://easy

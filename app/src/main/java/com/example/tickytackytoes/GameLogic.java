@@ -38,6 +38,11 @@ public class GameLogic {
 
             //update textView for playerTurn
             if(player == 1) {
+                if (CPULogic.gameDifficulty == 2) {
+                    // only update playerPastMoves if difficulty set to hard
+                    int[] playerMove = {row, col};
+                    CPULogic.playerPastMoves.add(playerMove);
+                }
                 playerTurn.setText((String.format("%s's Turn", PlayerSetup.playerNames[1])));
             } else {
                 playerTurn.setText((String.format("%s's Turn", PlayerSetup.playerNames[0])));
