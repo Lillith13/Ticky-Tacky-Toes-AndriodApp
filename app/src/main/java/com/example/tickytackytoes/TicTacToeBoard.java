@@ -300,9 +300,6 @@ public class TicTacToeBoard extends View {
 
     public void resetGame() {
         game.resetGame();
-        if (MainActivity.playerCount == 1) {
-           GameLogic.setPlayer(1);
-        }
         winningLine = false;
     }
 

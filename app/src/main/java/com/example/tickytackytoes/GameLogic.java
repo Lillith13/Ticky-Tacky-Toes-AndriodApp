@@ -6,6 +6,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class GameLogic {
     protected static int[][] gameboard;
@@ -38,8 +39,8 @@ public class GameLogic {
 
             //update textView for playerTurn
             if(player == 1) {
-                if (CPULogic.gameDifficulty == 2) {
-                    // only update playerPastMoves if difficulty set to hard
+                if (CPULogic.gameDifficulty >= 1) {
+                    // only update playerPastMoves if difficulty set to med or hard
                     int[] playerMove = {row, col};
                     CPULogic.playerPastMoves.add(playerMove);
                 }
@@ -118,8 +119,14 @@ public class GameLogic {
 
         //only reset if OnePlayer mode
         if(MainActivity.getPlayerCount() == 1) {
-            CPULogic.cpuPastMoves = new ArrayList<>(); // should empty arrayList from last game
+            //CPULogic.cpuPastMoves = new ArrayList<>(); // should empty arrayList from last game
             setPlayer(1);
+
+            // making sure past move tracking is reset for med and hard difficulties
+            if (CPULogic.gameDifficulty > 0) {
+                CPULogic.cpuPastMoves = new ArrayList<>();
+                CPULogic.playerPastMoves = new HashSet<>();
+            }
         }
 
         playAgainBTN.setVisibility(View.GONE);

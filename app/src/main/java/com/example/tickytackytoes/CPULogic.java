@@ -23,14 +23,16 @@ public class CPULogic {
         gameDifficulty = PlayerSetup.getDifficulty();
         validMove = false;
 
-        // may change to switch case and only do initial copy of board if on hard mode
-        if(gameDifficulty == 1 || gameDifficulty == 2) {
-            cpuPastMoves = new ArrayList<>();
-            cpuLastMove = new int[2]; // only ever needs to hold 2 numbers - the last chosen row and col
-            // deep copy of board on initialize CPULogic
-            gameBoardDeepCopy = deepCopyBoard(GameLogic.getGameboard());
+        cpuLastMove = new int[2];
+        cpuPastMoves = new ArrayList<>();
+
+        // deep copy of board on initialize CPULogic
+        gameBoardDeepCopy = deepCopyBoard(GameLogic.getGameboard());
+
+        // only med and hard needs player past moves
+        if(gameDifficulty >= 1) {
+            playerPastMoves = new HashSet<>();
         }
-        if (gameDifficulty == 2) playerPastMoves = new HashSet<>();
     }
 
 /// HELPERS
@@ -204,9 +206,9 @@ public class CPULogic {
 
 /// DIFFICULTY LOGIC FUNCTIONS
 
-    private static int[] easyMove() { return new int[] {pickRow(), pickCol()}; }
+    private static int[] pickRandom() { return new int[] {pickRow(), pickCol()}; }
 
-    private static int[] mediumMove() {
+    private static int[] easyMove() { // search for own win
         // if pastMoves.length != 0
         if (!cpuPastMoves.isEmpty()) {
             if (cpuPastMoves.size() > 1) {
@@ -220,7 +222,9 @@ public class CPULogic {
         return null;
     }
 
-    private static int[] hardMove () {
+    private static int[] mediumMove () { // block player win or search for own win
+        int[] move = null;
+
         // update playerPastMoves List
         List<int[]> playerMovesList = Collections.emptyList();
         if(playerPastMoves != null) {
@@ -232,23 +236,84 @@ public class CPULogic {
             if (playerMovesList.size() > 1) {
                 // block potential player win
                 int[] blockMove = findPotWin(playerMovesList, 1);
-                if(blockMove != null) return blockMove;
+                if(blockMove != null) move = blockMove;
             }
 
             if (cpuPastMoves.size() > 1) {
                 // find a move for CPU win
                 int[] cpuWin = findPotWin(cpuPastMoves, 2);
-                if (cpuWin != null) return cpuWin;
-
+                if (cpuWin != null) move = cpuWin;
             }
 
             // all else failed => find open neighbor
-            return findOpenNeighbor();
+            if (move == null) return findOpenNeighbor();
         }
 
-        // all other conditions failed == return null == will call easyMove() func for random move
-        return null;
+        return move;
     }
+
+    private static int[] hardMove() { // implement strategy, block player, or search for own win
+        int[] move = null; // default medium move
+
+        // update playerPastMoves List
+        List<int[]> playerMovesList = Collections.emptyList();
+        if(playerPastMoves != null) {
+            playerMovesList = playerPastMoves.stream().toList();
+        }
+
+        if(!cpuPastMoves.isEmpty()) {
+
+            // 1. Block opponent's win
+            if (playerMovesList.size() > 1) {
+                // block potential player win
+                int[] blockMove = findPotWin(playerMovesList, 1);
+                if(blockMove != null) move = blockMove;
+            }
+
+            // 2. Try to win --- even if there is a block move, check and return a win if available
+            if (cpuPastMoves.size() > 1) {
+                // find a move for CPU win
+                int[] cpuWin = findPotWin(cpuPastMoves, 2);
+                if (cpuWin != null) move = cpuWin;
+            }
+
+        }
+
+        if (move == null) {
+            int[][] opposites = {{1,1},{1,3},{3,1},{3,3}};
+
+            // 3. Prioritize center
+            if (GameLogic.getGameboard()[1][1] == 0) return new int[]{2, 2};
+
+            if (!playerMovesList.isEmpty()) {
+                // 4. If player took a corner, take the opposite corner
+                for (int[] corner : opposites) {
+                    int[] opp = {4 - corner[0], 4 - corner[1]};
+                    if (GameLogic.getGameboard()[corner[0]-1][corner[1]-1] == 1 &&
+                            GameLogic.getGameboard()[opp[0]-1][opp[1]-1] == 0) {
+                        return opp;
+                    }
+                }
+
+            }
+
+            // 5. Otherwise, take any available corner
+            for (int[] corner : opposites) {
+                if (GameLogic.getGameboard()[corner[0]-1][corner[1]-1] == 0) return corner;
+            }
+
+            // 6. Otherwise, pick a side space
+            int[][] sides = {{1,2},{2,1},{2,3},{3,2}};
+            for (int[] side : sides) {
+                if (GameLogic.getGameboard()[side[0]-1][side[1]-1] == 0) return side;
+            }
+
+            move = findOpenNeighbor();
+        }
+
+        // 7. Random fallback
+        return move;
+    };
 
 /// MAIN CPU-MOVE FUNCTION
     public static int[] cpuMove(GameLogic game, boolean winningLine) {
@@ -268,16 +333,17 @@ public class CPULogic {
                     case 1:
                         //medium
                         moveChosen = mediumMove();
-                        if (moveChosen == null) moveChosen = easyMove();
+                        if (moveChosen == null) moveChosen = pickRandom();
                         break;
                     case 2:
                         //hard
                         moveChosen = hardMove();
-                        if(moveChosen == null) moveChosen = easyMove();
+                        if(moveChosen == null) moveChosen = pickRandom();
                         break;
                     case 0://easy
                     default:
                         moveChosen = easyMove();
+                        if (moveChosen == null) moveChosen = pickRandom();
                         break;
                 }
 
@@ -301,13 +367,8 @@ public class CPULogic {
             }
         }
 
-        switch (gameDifficulty) {
-            case 1: //medium
-            case 2: //hard
-                cpuLastMove = moveChosen;
-                cpuPastMoves.add(new int[] {moveChosen[0], moveChosen[1]});
-                break;
-        }
+        cpuLastMove = moveChosen;
+        cpuPastMoves.add(new int[] {moveChosen[0], moveChosen[1]});
 
         // pass back to touchEvent in TicTacToeBoard where the touch is happening [row, col] and whether or not it triggers a win condition (0/false or 1/true)
         return new int[]{row, col, cpuWin};

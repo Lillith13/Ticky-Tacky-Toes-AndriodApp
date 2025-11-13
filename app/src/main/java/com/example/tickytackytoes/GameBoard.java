@@ -66,21 +66,15 @@ public class GameBoard extends AppCompatActivity {
     public void playAgainButtonClick(View view) {
         tictactoeboard.resetGame();
         tictactoeboard.invalidate();
-
-        // making sure past move tracking is reset for med and hard difficulties
-        if (CPULogic.gameDifficulty == 1 || CPULogic.gameDifficulty == 2) {
-            CPULogic.cpuPastMoves = new ArrayList<>();
-            if (CPULogic.gameDifficulty == 2) CPULogic.playerPastMoves = new HashSet<>();
-        }
     };
 
     public void homeButtonClick(View view) {
         Intent intent = new Intent(this, MainActivity.class);
 
         // making sure past move tracking is reset for med and hard difficulties
-        if (CPULogic.gameDifficulty == 1 || CPULogic.gameDifficulty == 2) {
+        if (CPULogic.gameDifficulty > 0) {
             CPULogic.cpuPastMoves = new ArrayList<>();
-            if (CPULogic.gameDifficulty == 2) CPULogic.playerPastMoves = new HashSet<>();
+            CPULogic.playerPastMoves = new HashSet<>();
         }
 
         GameLogic.setPlayer(1);
