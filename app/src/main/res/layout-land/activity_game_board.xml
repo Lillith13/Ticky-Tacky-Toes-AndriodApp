@@ -8,28 +8,16 @@
     android:layout_height="match_parent"
     tools:context=".GameBoard">
 
-    <!--  -->
-    <TextView
-        android:id="@+id/playerDisplay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:textSize="35sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <FrameLayout
         android:id="@+id/boardContainer"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginEnd="15dp"
-        app:layout_constraintBottom_toTopOf="@+id/gameboardButtonsContainer"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/gameboardButtonsContainer"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/playerDisplay">
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.example.tickytackytoes.TicTacToeBoard
             android:id="@+id/ticTacToeBoard"
@@ -47,34 +35,53 @@
         android:id="@+id/gameboardButtonsContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:layout_marginBottom="75dp"
+
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="25dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/boardContainer">
+        app:layout_constraintStart_toEndOf="@+id/boardContainer"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <Button
-            android:id="@+id/playAgainButton"
-            android:layout_width="150dp"
+        <TextView
+            android:id="@+id/playerDisplay"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="playAgainButtonClick"
-            android:text="@string/playAgainButton"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
+            android:textSize="35sp"
+            app:layout_constraintBottom_toTopOf="@id/playAgainButton"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/homeButton"
-            android:layout_width="150dp"
+            android:id="@+id/playAgainButton"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="25dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginBottom="10dp"
+            android:onClick="playAgainButtonClick"
+            android:text="@string/playAgainButton"
+            app:layout_constraintBottom_toTopOf="@id/homeButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/playerDisplay" />
+
+        <Button
+            android:id="@+id/homeButton"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
             android:onClick="homeButtonClick"
             android:text="@string/homeButton"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/playAgainButton"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/playAgainButton" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

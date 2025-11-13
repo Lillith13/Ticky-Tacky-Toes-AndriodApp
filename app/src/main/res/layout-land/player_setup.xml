@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PlayerSetup">
+
+
+    <Button
+        android:id="@+id/chooseDifficulty"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="15dp"
+        android:onClick="difficultySelect"
+        android:text="@string/difficultyButtText"
+        app:layout_constraintBottom_toTopOf="@+id/inputStuffContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/playerSetup_GameTitle" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/inputStuffContainer"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+
+        app:layout_constraintBottom_toTopOf="@+id/startGameButton"
+        app:layout_constraintTop_toBottomOf="@+id/chooseDifficulty"
+        app:layout_constraintVertical_bias="0.622"
+        tools:layout_editor_absoluteX="16dp">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/p1n"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            app:layout_constraintBottom_toTopOf="@+id/p2n"
+            app:layout_constraintEnd_toStartOf="@+id/custP1marker"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/p1n_Input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/p1nInputPlaceholder"
+                tools:layout_editor_absoluteX="52dp"
+                tools:layout_editor_absoluteY="129dp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/custP1marker"
+            android:layout_width="116dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="15dp"
+            android:onClick="customizeMarker"
+            android:text="@string/custMarkButton"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@+id/custP2marker"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/p1n"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/p2n"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/custP2marker"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/p1n">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/p2n_Input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/p2nInputPlaceholder"
+                tools:layout_editor_absoluteX="61dp"
+                tools:layout_editor_absoluteY="69dp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/custP2marker"
+            android:layout_width="116dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="15dp"
+            android:onClick="customizeMarker"
+            android:text="@string/custMarkButton"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/p2n"
+            app:layout_constraintTop_toBottomOf="@+id/custP1marker" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/startGameButton"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="25dp"
+        android:onClick="startGame"
+        android:text="@string/startGameButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/inputStuffContainer" />
+
+    <TextView
+        android:id="@+id/playerSetup_GameTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+
+        android:text="@string/app_name"
+
+        android:textAlignment="center"
+        android:textSize="35sp"
+        app:layout_constraintBottom_toTopOf="@+id/chooseDifficulty"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
