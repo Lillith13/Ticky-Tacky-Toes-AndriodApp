@@ -165,22 +165,23 @@ public class TicTacToeBoard extends View {
             }
 
             // below IF should be false unless CPU turn && gamemode == Single Player
-            if (!winningLine && GameLogic.getPlayer() % 2 == 0 && MainActivity.playerCount == 1) {
+            if (GameLogic.getPlayer() % 2 == 0 && MainActivity.playerCount == 1) {
+                if (!winningLine) {
+                    // wait a few seconds for CPU to make it's move
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                        int[] cpuChosenMove = CPULogic.cpuMove(game, winningLine);
+                        float cpuX = (cpuChosenMove[1] - 0.5f) * cellSize;
+                        float cpuY = (cpuChosenMove[0] - 0.5f) * cellSize;
+                        simulateTouch(cpuX, cpuY);
 
-                // wait a few seconds for CPU to make it's move
-                new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                    int[] cpuChosenMove = CPULogic.cpuMove(game, winningLine);
-                    float cpuX = (cpuChosenMove[1] - 0.5f) * cellSize;
-                    float cpuY = (cpuChosenMove[0] - 0.5f) * cellSize;
-                    simulateTouch(cpuX, cpuY);
+                        // triggers onDraw for winningLine for CPU win
+                        if (cpuChosenMove[2] == 1)  winningLine = true;
 
-                    // triggers onDraw for winningLine for CPU win
-                    if (cpuChosenMove[2] == 1)  winningLine = true;
+                        invalidate();
+                    }, 1000);
 
                     invalidate();
-                }, 1000);
-
-                invalidate();
+                }
             }
 
             //refreshes gameboard
